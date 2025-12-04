@@ -5,20 +5,31 @@ function App() {
   const numbers = "0123456789";
   const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
 
-  const [name, setName] = useState("Marco Bacci");
+  // const [name, setName] = useState("Marco Bacci");
+  // const [specialization, setSpecialization] = useState("");
+  // const [years, setYears] = useState("1");
+  console.log("render");
+
+  const refName = useRef();
+  const refYears = useRef();
+  const refSpecialization = useRef();
+
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
-  const [specialization, setSpecialization] = useState("");
-  const [years, setYears] = useState("1");
-  const [description, setDescription] = useState(
-    "mi applico ma non sono intelligente"
-  );
+  const [description, setDescription] = useState("");
 
-  // const [isUserValid, setIsUserVsalid] = useState(null);
+  // --------------------validazione con state e effect--------------------------------
 
-  // useEffect(() => {
-  //   isUserValid >= 6 ? "Username valido" : "Username non valido";
-  // }, [username]);
+  const [isUserValid, setIsUserVsalid] = useState(false);
+
+  useEffect(() => {
+    const charsValid = username.split("").every((char) => {
+      return letters.includes(char.toLowerCase()) || numbers.includes(char);
+    });
+    const isValid = charsValid && username.trim("").length >= 6;
+    setIsUserVsalid(isValid);
+  }, [username]);
+
   // -------------------------VALIDAZIONI--------------------------------
   // ----------------------username-----------------------------
   const isUserNameValid = useMemo(() => {
@@ -27,6 +38,7 @@ function App() {
     });
     return charsValid && username.trim("").length >= 6;
   }, [username]);
+
   // ----------------------password-----------------------------
   const isPasswordValid = useMemo(() => {
     const passValid = password.split("").some((char) => {
@@ -47,6 +59,9 @@ function App() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const name = refName.current.value;
+    const specialization = refSpecialization.current.value;
+    const years = refYears.current.value;
     if (
       !name.trim() ||
       !username.trim() ||
@@ -55,7 +70,7 @@ function App() {
       !years.trim() ||
       years <= 0 ||
       !description.trim() ||
-      !isUserNameValid ||
+      !isUserValid ||
       !isPasswordValid ||
       !isDescriptionValid
     ) {
@@ -86,8 +101,7 @@ function App() {
                     type="text"
                     className="form-control"
                     placeholder="Nome Cognome"
-                    value={name}
-                    onChange={(e) => setName(e.target.value)}
+                    ref={refName}
                   />
                 </div>
               </div>
@@ -102,10 +116,8 @@ function App() {
                     onChange={(e) => setUsername(e.target.value)}
                   />
                   {username.trim() && (
-                    <p style={{ color: isUserNameValid ? "green" : "red" }}>
-                      {isUserNameValid
-                        ? "username valido"
-                        : "username non valido"}
+                    <p style={{ color: isUserValid ? "green" : "red" }}>
+                      {isUserValid ? "username valido" : "username non valido"}
                     </p>
                   )}
                 </div>
@@ -134,9 +146,9 @@ function App() {
                 <select
                   className="form-select"
                   aria-label="Default select example"
-                  value={specialization}
-                  onChange={(e) => setSpecialization(e.target.value)}
+                  ref={refSpecialization}
                 >
+                  <option value="">seleziona</option>
                   <option value="full stack">Full Stack</option>
                   <option value="frontend">Frontend</option>
                   <option value="backend">Backend</option>
@@ -149,8 +161,7 @@ function App() {
                     type="number"
                     className="form-control"
                     placeholder="5"
-                    value={years}
-                    onChange={(e) => setYears(e.target.value)}
+                    ref={refYears}
                   />
                 </div>
               </div>
@@ -168,7 +179,11 @@ function App() {
                     <p style={{ color: isDescriptionValid ? "green" : "red" }}>
                       {isDescriptionValid
                         ? "descrizione valida"
-                        : "descrizione incompleta (minimo 100 caratteri):" +" "+ description.trim().length +" "+ "caratteri" }
+                        : "descrizione incompleta (minimo 100 caratteri):" +
+                          " " +
+                          description.trim().length +
+                          " " +
+                          "caratteri"}
                     </p>
                   )}
                 </div>
