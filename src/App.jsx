@@ -7,7 +7,7 @@ function App() {
 
   const [name, setName] = useState("Marco Bacci");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("pendejo84");
+  const [password, setPassword] = useState("");
   const [specialization, setSpecialization] = useState("");
   const [years, setYears] = useState("1");
   const [description, setDescription] = useState(
@@ -31,8 +31,8 @@ function App() {
   const isPasswordValid = useMemo(() => {
     const passValid = password.split("").some((char) => {
       return (
-        symbols.includes(char) &&
-        letters.includes(char.toLowerCase()) &&
+        symbols.includes(char) ||
+        letters.includes(char.toLowerCase()) ||
         numbers.includes(char)
       );
     });
@@ -54,7 +54,10 @@ function App() {
       !specialization.trim() ||
       !years.trim() ||
       years <= 0 ||
-      (!description.trim() && !isUserValid)
+      !description.trim() ||
+      !isUserNameValid ||
+      !isPasswordValid ||
+      !isDescriptionValid
     ) {
       alert("alcuni campi non sono stati compilati correttamente");
       return;
@@ -98,6 +101,13 @@ function App() {
                     value={username}
                     onChange={(e) => setUsername(e.target.value)}
                   />
+                  {username.trim() && (
+                    <p style={{ color: isUserNameValid ? "green" : "red" }}>
+                      {isUserNameValid
+                        ? "username valido"
+                        : "username non valido"}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="col-md-4">
@@ -110,6 +120,13 @@ function App() {
                     value={password}
                     onChange={(e) => setPassword(e.target.value)}
                   />
+                  {password.trim() && (
+                    <p style={{ color: isPasswordValid ? "green" : "red" }}>
+                      {isPasswordValid
+                        ? "password valida"
+                        : "password non valida"}
+                    </p>
+                  )}
                 </div>
               </div>
               <div className="col-md-4">
@@ -147,6 +164,13 @@ function App() {
                     value={description}
                     onChange={(e) => setDescription(e.target.value)}
                   />
+                  {description.trim() && (
+                    <p style={{ color: isDescriptionValid ? "green" : "red" }}>
+                      {isDescriptionValid
+                        ? "descrizione valida"
+                        : "descrizione incompleta (minimo 100 caratteri):" +" "+ description.trim().length +" "+ "caratteri" }
+                    </p>
+                  )}
                 </div>
               </div>
             </div>
