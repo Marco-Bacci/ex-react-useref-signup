@@ -19,14 +19,15 @@ function App() {
   // useEffect(() => {
   //   isUserValid >= 6 ? "Username valido" : "Username non valido";
   // }, [username]);
-
+  // -------------------------VALIDAZIONI--------------------------------
+  // ----------------------username-----------------------------
   const isUserNameValid = useMemo(() => {
     const charsValid = username.split("").every((char) => {
       return letters.includes(char.toLowerCase()) || numbers.includes(char);
     });
-    return charsValid && username.length >= 6;
+    return charsValid && username.trim("").length >= 6;
   }, [username]);
-
+  // ----------------------password-----------------------------
   const isPasswordValid = useMemo(() => {
     const passValid = password.split("").some((char) => {
       return (
@@ -35,8 +36,14 @@ function App() {
         numbers.includes(char)
       );
     });
-    return passValid && password.length >= 8;
+    return passValid && password.trim("").length >= 8;
   }, [password]);
+  // ----------------------description-----------------------------
+  const isDescriptionValid = useMemo(() => {
+    const descriptionValid =
+      description.trim("").length >= 100 && description.trim("").length <= 1000;
+    return descriptionValid;
+  }, [description]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
