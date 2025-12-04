@@ -1,11 +1,42 @@
-import { useState } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
+
 function App() {
-  const [name, setName] = useState("");
+  const letters = "abcdefghijklmnopqrstuvwxyz";
+  const numbers = "0123456789";
+  const symbols = "!@#$%^&*()-_=+[]{}|;:'\",.<>?/`~";
+
+  const [name, setName] = useState("Marco Bacci");
   const [username, setUsername] = useState("");
-  const [password, setPassword] = useState("");
+  const [password, setPassword] = useState("pendejo84");
   const [specialization, setSpecialization] = useState("");
-  const [years, setYears] = useState("");
-  const [description, setDescription] = useState("");
+  const [years, setYears] = useState("1");
+  const [description, setDescription] = useState(
+    "mi applico ma non sono intelligente"
+  );
+
+  // const [isUserValid, setIsUserVsalid] = useState(null);
+
+  // useEffect(() => {
+  //   isUserValid >= 6 ? "Username valido" : "Username non valido";
+  // }, [username]);
+
+  const isUserNameValid = useMemo(() => {
+    const charsValid = username.split("").every((char) => {
+      return letters.includes(char.toLowerCase()) || numbers.includes(char);
+    });
+    return charsValid && username.length >= 6;
+  }, [username]);
+
+  const isPasswordValid = useMemo(() => {
+    const passValid = password.split("").some((char) => {
+      return (
+        symbols.includes(char) &&
+        letters.includes(char.toLowerCase()) &&
+        numbers.includes(char)
+      );
+    });
+    return passValid && password.length >= 8;
+  }, [password]);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -16,7 +47,7 @@ function App() {
       !specialization.trim() ||
       !years.trim() ||
       years <= 0 ||
-      !description.trim()
+      (!description.trim() && !isUserValid)
     ) {
       alert("alcuni campi non sono stati compilati correttamente");
       return;
